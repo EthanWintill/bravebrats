@@ -46,11 +46,17 @@ class Player {
 const result = {
   win: 0, // 0 hold + pa - py  
   paAmbass: false,
-  pyAmbass: false
+  pyAmbass: false,
+  paGeneral: false,
+    pyGeneral: false,
+    paSpy: false,
+    pySpy: false,
+    paWin:false,
+    pyWin:false
 }*/
 // pre check for princess game win!!! //
 // pre check if wizrd blocks general/spy!!!  //
-function battle(pa, py){
+function battle(pa , py){ //Players
   paStrength = pa.card + (pa.generalLast * 2);
   pyStrength = py.card + (py.generalLast * 2);
   const wizardInPlay = pa.card == 5 || py.card == 5;
@@ -58,12 +64,12 @@ function battle(pa, py){
     win: 0,
     paAmbass: pa.card == 4 && !wizardInPlay ? true : false,
     pyAmbass: py.card == 4 && !wizardInPlay ? true : false,
-    paGeneral: false,
-    pyGeneral: false,
-    paSpy: false,
-    pySpy: false,
-    paWin:false,
-    pyWin:false
+    paGeneral: pa.card == 6 && !wizardInPlay ? true : false,
+    pyGeneral: py.card == 6 && !wizardInPlay ? true : false,
+    paSpy: pa.card == 2 && !wizardInPlay ? true : false,
+    pySpy: py.card == 2 && !wizardInPlay ? true : false,
+    paWin: pa.card == 1 && py.card == 7 ? true : false,
+    pyWin: py.card == 1 && pa.card == 7 ? true : false
   }
 
   if ((pa.card == 0 && py.card != 5) ||
