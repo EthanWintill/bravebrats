@@ -9,7 +9,7 @@ const deck = [0,1,2,3,4,5,6,7];
 
 class Player {
   constructor(){
-    this.hand = deck;
+    this.hand = [0,1,2,3,4,5,6,7];
     this.score = 0;
     this.generalLast = false;
     this.spyLast = false;
@@ -33,6 +33,8 @@ const result = {
 // pre check for princess game win!!! //
 // pre check if wizrd blocks general/spy!!!  //
 function battle(pa , py){ //Players
+  console.log(pa);
+  console.log(py);
   paStrength = pa.card + (pa.generalLast * 2);
   pyStrength = py.card + (py.generalLast * 2);
   const wizardInPlay = pa.card == 5 || py.card == 5;
@@ -44,8 +46,8 @@ function battle(pa , py){ //Players
     pyGeneral: py.card == 6 && !wizardInPlay ? true : false,
     paSpy: pa.card == 2 && !wizardInPlay ? true : false,
     pySpy: py.card == 2 && !wizardInPlay ? true : false,
-    paWin: pa.card == 1 && py.card == 7 ? true : false,
-    pyWin: py.card == 1 && pa.card == 7 ? true : false
+    paWin: false,
+    pyWin: false
   }
 
   if ((pa.card == 0 && py.card != 5) ||
@@ -54,11 +56,21 @@ function battle(pa , py){ //Players
     }
 
   else if (pa.card == 7 && py.card != 7){
-    result.win = 1;
+    if (py.card == 1){
+      result.win = -4;
+      result.pyWin = true;
+    }else{
+      result.win = 1;
+    }
   }
 
   else if (py.card == 7 && pa.card != 7){
-    result.win = -1;
+    if (pa.card == 1){
+      result.win = 4;
+      result.paWin = true;
+    }else{
+      result.win = -1;
+    }
   }
 
   else if ((pa.card == 3 || py.card == 3) && !wizardInPlay){
@@ -80,18 +92,37 @@ class Game {
     constructor(){
         this.applewood = new Player();
         this.yarg = new Player();
-        this.battles = [];
+        this.curDraws = [];
     }
     chooseCards(pa,py){
         this.applewood.card = pa;
-        this.applewood.deck.splice(this.applewood.deck.indexOf(pa),1);
+        this.applewood.hand.splice(this.applewood.hand.indexOf(pa),1);
 
         this.yarg.card = py;
-        this.yarg.deck.splice(this.yarg.deck.indexOf(pa),1);
+        this.yarg.hand.splice(this.yarg.hand.indexOf(py),1);
     }
     fight(){
-        result = battle(this.applewood.card,this.yarg.card)
+        result = battle(this.applewood,this.yarg)
+        if(result.paWin){
+          this.applewood.score = 1000;
+          console.log("PRINCESS WIN FOR APPLEWOOD");
+        }else if(result.pyWin){
+          this.yarg.score = 1000;
+          console.log("PRINCESS WIN FOR YARG");
+        }else if(result.win == 0){
+          this.curDraws.push(result);
+          console.log("DRAW");
+        }else if(result.win>0){
+          console.log("APPLEWOOD W");
+          this.applewood.score++;
+        }else if (result.win < 0){
+          console.log("YARG W");
+          this.yarg.score++;
+        } else{
+          console.log(result);
+        }
         
+        this.checkWin();
     }
 
 
@@ -100,7 +131,7 @@ class Game {
             return "Yarg wins";
         }else if(this.applewood.score - this.yarg.score >= 4){
             return "Applewood wins";
-        }else if(this.battles.length >= 8){
+        }else if(this.curDraws.length >= 8){
             return "Tie"
         }else{
             return "Still going"
@@ -108,3 +139,5 @@ class Game {
     }
 
 }
+
+module.exports = Game;
